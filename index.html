@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Mariam — A Quiet Confession</title>
+    
+    <!-- Google Fonts: Elegant serif for headings, readable serif for body, script for signature -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ===== ROOT VARIABLES - EDIT COLORS HERE ===== */
+        :root {
+            --color-primary: #8B2635;      /* Deep burgundy/wine */
+            --color-secondary: #D4A5A5;    /* Soft blush pink */
+            --color-accent: #C9A86A;       /* Warm gold */
+            --color-bg-light: #FFF8F3;     /* Cream/off-white */
+            --color-bg-dark: #1A1515;      /* Rich dark for contrast */
+            --color-text-light: #2C2424;   /* Soft black for readability */
+            --color-text-muted: #6B5B5B;   /* Muted brown */
+            
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Cormorant Garamond', serif;
+            --font-script: 'Great Vibes', cursive;
+            
+            --spacing-unit: 1.5rem;
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-bg-light: #1A1515;
+                --color-bg-dark: #FFF8F3;
+                --color-text-light: #F5E6E0;
+                --color-text-muted: #C4B5B5;
+            }
+        }
+        
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: var(--font-body);
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: var(--color-text-light);
+            background: var(--color-bg-light);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* ===== LOADING SCREEN ===== */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--color-bg-light) 0%, #F5EBE6 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loading-content {
+            text-align: center;
+        }
+        
+        .loading-heart {
+            font-size: 4rem;
+            color: var(--color-primary);
+            animation: heartPulse 1.5s ease-in-out infinite;
+            margin-bottom: 2rem;
+        }
+        
+        .loading-text {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--color-primary);
+            font-style: italic;
+            opacity: 0;
+            animation: fadeInOut 2s ease-in-out infinite;
+        }
+        
+        .loading-subtext {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            color: var(--color-text-muted);
+            margin-top: 1rem;
+            font-style: italic;
+        }
+        
+        @keyframes heartPulse {
+            0%, 100% { 
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% { 
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+        
+        /* Hide main content during loading */
+        body.loading .container {
+            opacity: 0;
+        }
+        
+        body.loading {
+            overflow: hidden;
+        }
+        
+        /* Subtle background texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at top left, rgba(139, 38, 53, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(212, 165, 165, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        /* Floating particles canvas */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+        
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+            position: relative;
+        }
+        
+        /* ===== HERO SECTION ===== */
+        .hero {
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 4rem 0;
+            opacity: 0;
+            animation: fadeInUp 1.2s ease-out 0.3s forwards;
+        }
+        
+        .hero__salutation {
+            font-family: var(--font-heading);
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            font-weight: 400;
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+            font-style: italic;
+            letter-spacing: 0.02em;
+        }
+        
+        .hero__name {
+            font-family: var(--font-script);
+            font-size: clamp(3rem, 8vw, 5rem);
+            color: var(--color-accent);
+            margin-bottom: 2rem;
+            line-height: 1.2;
+        }
+        
+        .hero__subtitle {
+            font-family: var(--font-body);
+            font-size: 1.25rem;
+            font-weight: 300;
+            color: var(--color-text-muted);
+            max-width: 28rem;
+            font-style: italic;
+        }
+        
+        /* Decorative line */
+        .divider {
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--color-accent), transparent);
+            margin: 3rem auto;
+            opacity: 0.6;
+        }
+        
+        /* ===== LETTER CONTENT ===== */
+        .letter {
+            padding: 2rem 0;
+        }
+        
+        .letter__paragraph {
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out forwards;
+            text-align: justify;
+            text-indent: 2em;
+            hyphens: auto;
+        }
+        
+        /* Stagger paragraph animations */
+        .letter__paragraph:nth-child(1) { animation-delay: 0.6s; }
+        .letter__paragraph:nth-child(2) { animation-delay: 0.8s; }
+        .letter__paragraph:nth-child(3) { animation-delay: 1s; }
+        .letter__paragraph:nth-child(4) { animation-delay: 1.2s; }
+        .letter__paragraph:nth-child(5) { animation-delay: 1.4s; }
+        .letter__paragraph:nth-child(6) { animation-delay: 1.6s; }
+        
+        .letter__paragraph:first-child {
+            text-indent: 0;
+        }
+        
+        /* Emphasis within text */
+        .letter__emphasis {
+            font-style: italic;
+            color: var(--color-primary);
+            font-weight: 500;
+        }
+        
+        /* ===== QUOTE SECTION ===== */
+        .quote {
+            margin: 4rem 0;
+            padding: 2.5rem 2rem;
+            border-left: 3px solid var(--color-accent);
+            background: linear-gradient(to right, rgba(201, 168, 106, 0.08), transparent);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 1.8s forwards;
+        }
+        
+        .quote__text {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-style: italic;
+            color: var(--color-primary);
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+        
+        .quote__author {
+            text-align: right;
+            font-size: 1rem;
+            color: var(--color-text-muted);
+            font-style: italic;
+        }
+        
+        /* ===== SIGNATURE SECTION ===== */
+        .signature {
+            margin-top: 4rem;
+            text-align: right;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 2s forwards;
+        }
+        
+        .signature__closing {
+            font-family: var(--font-body);
+            font-size: 1.125rem;
+            color: var(--color-text-muted);
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+        
+        .signature__name {
+            font-family: var(--font-script);
+            font-size: 2.5rem;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .signature__date {
+            font-size: 1rem;
+            color: var(--color-text-muted);
+            font-style: italic;
+        }
+        
+        /* ===== CALL TO ACTION ===== */
+        .cta {
+            text-align: center;
+            margin: 4rem 0 2rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 2.4s forwards;
+        }
+        
+        .cta__button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, var(--color-primary), #A33344);
+            color: #FFFFFF;
+            text-decoration: none;
+            border-radius: 50px;
+            font-family: var(--font-body);
+            font-size: 1.125rem;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(139, 38, 53, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta__button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .cta__button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(139, 38, 53, 0.4);
+        }
+        
+        .cta__button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .cta__button span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 2rem 0 3rem;
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+            font-style: italic;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 2.6s forwards;
+        }
+        
+        .footer__heart {
+            color: var(--color-primary);
+            display: inline-block;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+        
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            10%, 30% { transform: scale(1.1); }
+            20%, 40% { transform: scale(1); }
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            body {
+                font-size: 1rem;
+            }
+            
+            .container {
+                padding: 2rem 1.25rem;
+            }
+            
+            .hero {
+                min-height: 50vh;
+                padding: 3rem 0;
+            }
+            
+            .letter__paragraph {
+                text-align: left;
+                text-indent: 0;
+                margin-bottom: 1.5rem;
+            }
+            
+            .quote {
+                padding: 1.5rem 1rem;
+            }
+            
+            .quote__text {
+                font-size: 1.25rem;
+            }
+            
+            .signature {
+                text-align: center;
+            }
+        }
+        
+        /* Smooth scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--color-bg-light);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-secondary);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-primary);
+        }
+    </style>
+</head>
+<body class="loading">
+    <!-- Loading Screen -->
+    <div class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-heart">♥</div>
+            <div class="loading-text">Preparing something special...</div>
+            <div class="loading-subtext">For Mariam</div>
+        </div>
+    </div>
+    
+    <!-- Background Music - Romantic Piano -->
+    <!-- Using a romantic royalty-free piano piece -->
+    <audio id="bgMusic" loop>
+        <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_4de3080e87.mp3" type="audio/mpeg">
+        <!-- Romantic Piano from Pixabay (royalty-free) -->
+    </audio>
+    
+    <!-- Floating particles background -->
+    <canvas id="particles"></canvas>
+    
+    <div class="container">
+        <!-- HERO SECTION -->
+        <section class="hero">
+            <h1 class="hero__salutation">To the woman who occupies my every thought,</h1>
+            <h2 class="hero__name">Mariam</h2>
+            <p class="hero__subtitle">A confession written in the quiet hours when courage finds its voice</p>
+        </section>
+        
+        <div class="divider"></div>
+        
+        <!-- LETTER CONTENT -->
+        <section class="letter">
+            <p class="letter__paragraph">
+                Some encounters happen in daylight, ordinary and expected. Ours happened under the stars, and nothing about it felt ordinary. The night we met, I wasn't prepared for you. I walked into that moment thinking it would be just another evening, and then there you were—and suddenly the world felt different, charged with a possibility I hadn't known I was seeking.
+            </p>
+            
+            <p class="letter__paragraph">
+                <span class="letter__emphasis">Your beauty</span> struck me first—I won't pretend otherwise. In that dim light, you seemed to glow with something beyond physical presence. The way you moved, the way shadows played across your face when you smiled, the elegance in your gestures. I found myself forgetting what I'd meant to say, my thoughts scattering like light through a prism. You were, and are, absolutely breathtaking.
+            </p>
+            
+            <p class="letter__paragraph">
+                But beauty, I've learned, is just the beginning. As we talked that night, I discovered something even more captivating—<span class="letter__emphasis">the woman behind that beautiful face.</span> Your laugh, rich and genuine. The intelligence in your eyes when you spoke about things that matter to you. The way you listened, really listened, as if my words carried weight. You possess a rare combination of grace and depth that makes it impossible not to want more.
+            </p>
+            
+            <p class="letter__paragraph">
+                Since that night, you've occupied a space in my mind I didn't know was vacant. I catch myself replaying our conversation—the sound of your voice, the way you tilted your head when considering something I'd said, how time seemed to slow down when we locked eyes. I've been trying to find the right words to tell you this, the right moment, but I've realized there's no perfect time for truth. There's only now, and this need to let you know what you've awakened in me.
+            </p>
+            
+            <p class="letter__paragraph">
+                I'm drawn to you, Mariam, in ways that surprise me. <span class="letter__emphasis">You make me want to be better</span>—more articulate, more present, more worthy of your time and attention. I want to know the stories you haven't told anyone, the dreams you chase in quiet moments, the things that make your heart race. I want to discover what makes you laugh so hard you can't breathe, what music moves you, what keeps you up at night thinking.
+            </p>
+            
+            <p class="letter__paragraph">
+                This might be bold—showing up like this, putting my feelings into words you can't unhear. But you deserve honesty, not games or half-truths. So here it is: I would love the chance to take you out, to see you again in a way that's deliberate and unhurried. To learn who you are beyond that enchanted first meeting. To see if this connection I feel—this pull toward you—is something you recognize too. If there's even a chance you might say yes, it would make this vulnerability worthwhile.
+            </p>
+        </section>
+        
+        <!-- QUOTE SECTION -->
+        <aside class="quote">
+            <p class="quote__text">
+                "In all the world, there is no heart for me like yours. In all the world, there is no love for you like mine."
+            </p>
+            <p class="quote__author">— Maya Angelou</p>
+        </aside>
+        
+        <!-- SIGNATURE -->
+        <section class="signature">
+            <p class="signature__closing">With all the sincerity my heart can muster,</p>
+            <p class="signature__name">Edwin</p>
+            <p class="signature__date">March 18, 2026</p>
+        </section>
+        
+        <!-- CALL TO ACTION -->
+        <section class="cta">
+            <a href="https://wa.me/256706058594?text=Your%20letter%20touched%20my%20heart%20%E2%9D%A4%EF%B8%8F" class="cta__button">
+                <span>Reply if this made you smile</span>
+            </a>
+        </section>
+        
+        <!-- FOOTER -->
+        <!-- EDIT: Replace [Your City] with your actual location -->
+        <footer class="footer">
+            Made with <span class="footer__heart">♥</span> in Kampala<br>
+            For Mariam, with hope and admiration
+        </footer>
+    </div>
+    
+    <!-- ===== JAVASCRIPT FOR FLOATING PARTICLES ===== -->
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // Subtle floating particles animation
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        
+        // Set canvas size
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        // Particle class
+        class Particle {
+            constructor() {
+                this.reset();
+                this.y = Math.random() * canvas.height;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = -10;
+                this.size = Math.random() * 3 + 1;
+                this.speedY = Math.random() * 0.5 + 0.2;
+                this.speedX = Math.random() * 0.3 - 0.15;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                
+                // Reset if particle goes off screen
+                if (this.y > canvas.height) {
+                    this.reset();
+                }
+                
+                // Gentle horizontal boundary
+                if (this.x < 0 || this.x > canvas.width) {
+                    this.speedX *= -1;
+                }
+            }
+            
+            draw() {
+                ctx.fillStyle = `rgba(139, 38, 53, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        // Create particles
+        const particles = [];
+        const particleCount = 30; // Minimal count for elegance
+        
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+        
+        // Animation loop
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+        
+        // Smooth scroll reveal for elements (optional enhancement)
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe letter paragraphs for scroll-triggered animation
+        document.querySelectorAll('.letter__paragraph').forEach(paragraph => {
+            observer.observe(paragraph);
+        });
+        
+        // ===== LOADING SCREEN & MUSIC HANDLER =====
+        window.addEventListener('load', function() {
+            const loadingScreen = document.querySelector('.loading-screen');
+            const bgMusic = document.getElementById('bgMusic');
+            const body = document.body;
+            
+            // Hide loading screen after 2 seconds
+            setTimeout(function() {
+                loadingScreen.classList.add('hidden');
+                body.classList.remove('loading');
+                
+                // Try to autoplay music (browsers require user interaction)
+                // Music will play automatically on most modern browsers
+                bgMusic.volume = 0.3; // Set to 30% volume for subtlety
+                bgMusic.play().catch(function(error) {
+                    console.log('Autoplay prevented. Music will start on first interaction.');
+                    
+                    // If autoplay fails, play on first user interaction
+                    const playOnInteraction = function() {
+                        bgMusic.play();
+                        document.removeEventListener('click', playOnInteraction);
+                        document.removeEventListener('touchstart', playOnInteraction);
+                        document.removeEventListener('scroll', playOnInteraction);
+                    };
+                    
+                    document.addEventListener('click', playOnInteraction);
+                    document.addEventListener('touchstart', playOnInteraction);
+                    document.addEventListener('scroll', playOnInteraction);
+                });
+            }, 2500); // 2.5 second loading time
+        });
+    </script>
+</body>
+</html>
